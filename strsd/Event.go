@@ -1,3 +1,4 @@
+//Events in turn (Can be a shot animation etc.)
 package strsd
 
 type Event struct {

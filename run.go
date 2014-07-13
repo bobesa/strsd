@@ -1,3 +1,10 @@
+/*
+	Default runnable of STRSD
+	This provides you with:
+	1) single game instance
+	2) user game instance's ProcessRequest func with http.HandleFunc
+	3) preloading of players
+*/
 package main
 
 import (
@@ -18,9 +25,9 @@ func main() {
 	http.Handle("/", http.FileServer(http.Dir("./client/")))
 	http.HandleFunc(apiPath, myGame.ProcessRequest)
 
-	//Bots
-	users := []string{/*"bobesa","bot","bot2"*/}
-	for _, name := range users {
+	//Player preload
+	playerNames := []string{/*"bobesa","bot","bot2"*/}
+	for _, name := range playerNames {
 		player := myGame.MakePlayer(name);
 		myGame.AddPlayer(player)
 	}
