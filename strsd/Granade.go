@@ -1,3 +1,4 @@
+//Granade that bounces of walls/bounds and kills nearby players upon explosion
 package strsd
 
 type Granade struct {
@@ -9,6 +10,7 @@ type Granade struct {
 	Player *Player `json:"-"`
 }
 
+//Behaviour of granade for each turn
 func (o *Granade) Step() bool {
 	o.Timer--
 	if(o.Timer > 0) {
