@@ -1,3 +1,4 @@
+//A simple http request type
 package strsd
 
 type Request struct {
