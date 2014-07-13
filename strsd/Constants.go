@@ -1,3 +1,4 @@
+//All constants
 package strsd
 
 const (
