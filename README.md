@@ -23,6 +23,9 @@ User is *currently* registered automatically with 1st game request
 
 __{api path}__ is always game instance's apiPath
 
+### GET {api path}/{username}
+Just get the response (no commands)
+
 ### GET {api path}/{username}/shoot
 Shoots a bullet in next turn
 
