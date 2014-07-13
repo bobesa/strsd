@@ -1,0 +1,301 @@
+html, body {	   
+	image-rendering: optimizeSpeed;             /* FUCK SMOOTHING, GIVE ME SPEED  */
+    image-rendering: -moz-crisp-edges;          /* Firefox                        */
+    image-rendering: -o-crisp-edges;            /* Opera                          */
+    image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+    image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+    -ms-interpolation-mode: nearest-neighbor;   /* IE8+   */
+}
+
+#loginBar {
+	position: absolute;
+	width: 330px;
+	height: 180px;
+	left: 50%;
+	top: 50%;
+	margin-top: -90px;
+	margin-left: -165px;
+}
+
+#textUsername, #buttonLogin {
+	border: 2px solid #e67e22;	
+	background-color: #000;
+	color: #FFF;
+	border-radius: 25px;
+	font-size: 200%;
+	width: 326px;
+	text-align: center;
+	margin-bottom: 10px;
+}
+#buttonLogin {
+	color: #CCC;
+	cursor: pointer;
+}
+#buttonLogin:hover, #buttonLogin:active {
+	color: #FFF;
+	border: 2px solid #e74c3c;		
+}
+
+.face {
+	margin-bottom: 10px;
+	border: 2px solid #7f8c8d;
+	float: left;
+	width: 48px;
+	height: 48px;
+	background-image: url(players.png);
+	background-position: -2px -532px;
+	border-radius: 25px;
+	margin-right: 3px;
+	cursor: pointer;
+	-webkit-filter: grayscale(100%);
+	-webkit-transition: -webkit-filter 0.25s;
+}
+.face:nth-child(2) { background-position: -50px -532px; }
+.face:nth-child(3) { background-position: -98px -532px; }
+.face:nth-child(4) { background-position: -148px -532px; }
+.face:nth-child(5) { background-position: -194px -532px; }
+.face:nth-child(6) { background-position: -242px -532px; }
+.face:hover {
+	border: 2px solid #e74c3c;	
+	-webkit-filter: grayscale(50%);
+}
+.face.active, .face:active {
+	border: 2px solid #e67e22;	
+	-webkit-filter: grayscale(0%);
+}
+
+#tabGame,#tabLogin {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background-color: #000;
+}
+
+#timer, #timerFill {
+	position: absolute;
+	width: 100%;
+	height: 5px;
+	background-color: #7f8c8d;
+}
+#timerFill {
+	width: 0%;
+	background-color: #e74c3c;
+	-webkit-animation: timerFillAnim 1s infinite;
+}
+
+@-webkit-keyframes timerFillAnim {
+	0% { width: 0%; }
+	100% { width: 100%; }
+}
+
+#game {
+	left: 50%;
+	top: 50%;
+	position: absolute;
+	background-image: url(tile2.png);
+	zoom: 2;
+}
+
+#toolbar {
+	text-align: center;
+	background-color: #2c3e50;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: auto;
+	bottom: 0;
+	padding: 10px;
+}
+
+#scoreboard {
+	color: #95a5a6;
+	padding-bottom: 5px;
+}
+
+#controls > span {
+	margin: 5px;
+	padding: 2px;
+	padding-left: 10px;
+	padding-right: 10px;
+	border-radius: 5px;
+	border-bottom: 3px solid #3498db;
+	background-color: #2980b9;
+	color: #FFF;
+}
+#controls > span.active, #controls > span:active {
+	background-color: #e74c3c;
+	border-bottom: 3px solid #FFF;
+}
+
+#fov {
+	position: relative;
+}
+
+#debug {
+	position: relative;
+}
+
+#debug > div {
+	position: absolute;
+	width: 4px;
+	height: 4px;
+	margin-top: -2px;
+	margin-left: -2px;
+	background-color: #FFF;
+	z-index: 9999;
+}
+
+#scoreboard td:first-child {
+	text-align: right;
+}
+
+.fog {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 32px;
+	height: 32px;
+	background-color: rgba(0,0,0,0.25);
+}
+
+.user, .bullet, .granade, .wall, .miniExplosion, .shot, .userTitle {
+	background-color: transparent;
+	position: absolute;
+	left: 0;
+	top: 0;
+	-webkit-transition: left 0.5s, top 0.5s;
+}
+
+.userTitle {
+	text-align: center;
+	margin-left: -4px;
+	width: 40px;
+	height: 10px;
+	margin-top: -9px;
+	//background-color: rgba(0,0,0,0.25);
+	color: #FFF;
+	font-size: 50%;
+	z-index:12;
+}
+.userTitle > b {
+	color: #f1c40f;
+}
+
+.user {
+	background-image: url(players.png);
+	background-position: -32px 0;
+	width: 32px;
+	height: 32px;
+	z-index:2;
+}
+
+.faded {
+	z-index: 1;
+	opacity: 0.5;
+	-webkit-filter: grayscale(100%);
+}
+
+.bullet {
+	background-image: url(other.png);
+	background-position: -92px -152px;
+	margin-left: 11px;
+	margin-top: 11px;
+	width: 9px;
+	height: 9px;
+	z-index: 3;
+}
+
+@-webkit-keyframes granadeAnim {
+	0% { background-position: -212px -70px; }
+	25% { background-position: -229px -70px; }
+	50% { background-position: -246px -70px; }
+	75% { background-position: -263px -70px; }
+}
+
+.granade {
+	background-image: url(other.png);
+	background-position: -212px -70px;
+	margin-left: 10px;
+	margin-top: 4px;
+	width: 11px;
+	height: 18px;
+	z-index: 4;	
+	-webkit-animation: granadeAnim 1s steps(1) infinite;
+}
+
+@-webkit-keyframes miniExplosionAnim {
+	 0% { background-position:   -4px -3px; }
+	10% { background-position:  -21px -3px; }
+	20% { background-position:  -38px -3px; }
+	30% { background-position:  -55px -3px; }
+	40% { background-position:  -72px -3px; }
+	50% { background-position:  -89px -3px; }
+	60% { background-position: -106px -3px; }
+	70% { background-position: -123px -3px; }
+	80% { background-position: -140px -3px; }
+	90% { background-position: -157px -3px; }
+}
+
+.miniExplosion {
+	background-image: url(other.png);
+	background-position: -157px -3px;
+	margin-left: 8px;
+	margin-top: 8px;
+	width: 16px;
+	height: 16px;
+	-webkit-animation: miniExplosionAnim 1s steps(1);
+}
+
+@-webkit-keyframes shotAnim {
+	 0% { background-position:  -6px -263px; }
+	15% { background-position: -15px -263px; }
+	30% { background-position: -24px -263px; }
+	45% { background-position: -33px -263px; }
+	60% { background-position: -42px -263px; }
+	75% { background-position: -51px -263px; }
+	90% { background-position: -60px -263px; }
+}
+
+.shot {
+	background-image: url(other.png);
+	background-position: -60px -263px;
+	margin-left: 12px;
+	margin-top: 12px;
+	width: 8px;
+	height: 8px;
+	z-index: 10;	
+	-webkit-animation: shotAnim 1s steps(1);
+}
+
+@-webkit-keyframes granadeExplosionAnim {
+	 0% { background-position: -345px -3px; }
+	10% { background-position: -378px -3px; }
+	20% { background-position: -411px -3px; }
+	30% { background-position: -444px -3px; }
+	40% { background-position: -477px -3px; }
+	50% { background-position: -510px -3px; }
+	60% { background-position: -543px -3px; }
+	70% { background-position: -576px -3px; }
+	80% { background-position: -609px -3px; }
+	90% { background-position: -642px -3px; }
+}
+
+.explosion {
+	background-position: -642px -3px;
+	margin-left: 0px;
+	margin-top: 0px;
+	width: 32px;
+	height: 32px;
+	-webkit-animation: granadeExplosionAnim 1s steps(1);	
+}
+
+.wall {
+	background-image: url(wall.png);
+	background-position: 0 0;
+	margin-left: 0px;
+	margin-top: 0px;
+	width: 32px;
+	height: 32px;
+}
