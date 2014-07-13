@@ -1,12 +1,16 @@
+//Basic constants
 var TILE_SIZE = 32;
 var WAY_UP = 0,	WAY_RIGHT = 1, WAY_DOWN = 2, WAY_LEFT = 3;
 
+//Load our game code after css/html is loaded
 window.addEventListener("load",function(){
 	var gUserName = "", gPlayers = {}, gBullets = {}, gGranades = {}, gWalls = {}, gEvents = [], gLastTurn = -1, gUserAvatar = 0;
 	var vGame = document.getElementById("game"), vFoV = document.getElementById("fov"), vScoreboard = document.getElementById("scoreboard");
 
+	//Simple trick to be able to go forEach with NodeList
 	NodeList.prototype.forEach = Array.prototype.forEach;
 
+	//Sets Player gfx tile
 	var getTile = function(dom,x,y,sprite){
 		if(sprite == 0) {
 			sprite = gUserAvatar;
@@ -97,6 +101,7 @@ window.addEventListener("load",function(){
 		oReq.send();
 	};
 
+	//Login function
 	var doLogin = function(username){
 		gUserName = username;
 		doGameRequest();
@@ -104,6 +109,7 @@ window.addEventListener("load",function(){
 		document.getElementById("tabGame").style.display = "";
 	};
 
+	//Send a command you want to do
 	var doGameRequest = function(action){
 		if(action) {
 			action = "/" + action;
@@ -113,6 +119,7 @@ window.addEventListener("load",function(){
 		xhr("/api/"+gUserName+action,doParse);	
 	};
 
+	//Parse response from the XHR 
 	var doParse = function(gamedata){
 		//New Map
 		if(gLastTurn > gamedata.turn) {
@@ -316,10 +323,12 @@ window.addEventListener("load",function(){
 		}
 	};
 
+	//Do game request every 0.5 seconds
 	setInterval(function(){
 		if(gUserName != "") doGameRequest();
 	},500);
 
+	//Bind doLogin function to login button
 	document.getElementById("buttonLogin").addEventListener("click",function(){
 		var domInput = document.getElementById("textUsername");
 		var name = domInput.value;
@@ -333,6 +342,4 @@ window.addEventListener("load",function(){
 			doLogin(name);			
 		}
 	});
-
-	//doLogin("bobesa");
 });
