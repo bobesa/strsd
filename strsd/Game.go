@@ -1,3 +1,4 @@
+//Game type, workers and turn logic
 package strsd
 
 import (
@@ -21,16 +22,18 @@ type Game struct {
 	FoV [][]bool `json:"fov,omitempty"`
 	FragLimit int `json:"fragLimit"`
 	Events []Event `json:"events"`
-	Score map[string]int `json:"score"`
+	Score map[string]int `json:"score,omitempty"`
 	Queue chan *Request `json:"-"`
 
 	OptionFogOfWar bool `json:"-"`
 	OptionPersonalSpace bool `json:"-"`
+	OptionFieldOfView bool `json:"-"`
 
 	lastMapName string
 	apiPath string
 }
 
+//Create new game instance with workers etc.
 func MakeGame(apiPath string) *Game {
 	var g = Game{
 		Turn: 0,
@@ -47,13 +50,16 @@ func MakeGame(apiPath string) *Game {
 
 		OptionFogOfWar: DEFAULT_OPTION_FOG_OF_WAR,
 		OptionPersonalSpace: DEFAULT_OPTION_PERSONAL_SPACE,
+		OptionFieldOfView: DEFAULT_OPTION_FIELD_OF_VIEW,
 
 		lastMapName: "",
 		apiPath: apiPath,
 	}
 
+	//Load random map
 	g.NewRandomMap();
 
+	//Run request worker
 	go func(){
 		for {
 			req := <-g.Queue
@@ -64,6 +70,7 @@ func MakeGame(apiPath string) *Game {
 		}
 	}()
 
+	//Run turn timer
 	go func(){
 		for {
 			time.Sleep(time.Second)
@@ -74,10 +81,12 @@ func MakeGame(apiPath string) *Game {
 	return &g
 }
 
+//MakePlayer shortcut
 func (g *Game) MakePlayer(name string) *Player {
 	return MakePlayer(name,g)
 }
 
+//Function used for http.HandleFunc
 func (g *Game) ProcessRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -114,6 +123,7 @@ func (g *Game) ProcessRequest(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		//Create callback and wait for processing
 		callback := make(chan []byte)
 		g.Queue <- &Request{Player:player,Action:action,Callback:callback}
 		w.Write(<-callback)
@@ -122,6 +132,7 @@ func (g *Game) ProcessRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Load random next map (that is different from last map)
 func (g *Game) NewRandomMap() {
 	files, err := ioutil.ReadDir("maps")
 	if(err == nil) {
@@ -134,6 +145,8 @@ func (g *Game) NewRandomMap() {
 	}
 
 }
+
+//Load map by filename
 func (g *Game) NewMap(filename string) {
 	//Load Map
 	data, err := ioutil.ReadFile("maps/"+filename)
@@ -180,23 +193,33 @@ func (g *Game) NewMap(filename string) {
 
 }
 
+//Response generator (by modifying non-pointer game instance)
 func (g Game) GetResponse(p *Player) []byte {
-	visiblePlayers := make([]*Player,0)
-	for _, e := range g.Players {
-		if(e == p || p.CanSee(e)) {
-			visiblePlayers = append(visiblePlayers,e)
+	if(g.OptionFieldOfView) {
+		//Send only visible players if FoV is on
+		visiblePlayers := make([]*Player,0)
+		for _, e := range g.Players {
+			if(e == p || p.CanSee(e)) {
+				visiblePlayers = append(visiblePlayers,e)
+			}
+		}
+		g.Players = visiblePlayers
+		//Send fog of war?
+		if(g.OptionFogOfWar) {
+			g.FoV = p.FoV
 		}
 	}
-	g.Players = visiblePlayers
-	g.FoV = p.FoV
 	d, _ := json.Marshal(g)
 	return d
 }
 
+//Check if no player is in place & place is in map bounds
 func (g *Game) SpaceIsEmpty(x int, y int, p *Player) bool {
+	//Bounds & Wall check
 	if(!g.SpaceIsInBounds(x,y)) {
 		return false
 	}
+	//Player check + Personal space check
 	for _, o := range g.Players {
 		if(o != p && ( (o.X == x && o.Y == y) || (
 			g.OptionPersonalSpace && (
@@ -210,10 +233,13 @@ func (g *Game) SpaceIsEmpty(x int, y int, p *Player) bool {
 	return true
 }
 
+//Check if place is in map bounds and no wall is hit
 func (g *Game) SpaceIsInBounds(x int, y int) bool {
+	//Map bounds check
 	if(x < 0 || y < 0 || x >= g.Width || y >= g.Height) {
 		return false
 	}
+	//Wall check
 	for _, w := range g.Walls {
 		if(x == w.X && y == w.Y) {
 			return false
@@ -222,30 +248,36 @@ func (g *Game) SpaceIsInBounds(x int, y int) bool {
 	return true
 }
 
+//Adds event to game
 func (g *Game) AddEvent(x,y,t int) {
 	g.Events = append(g.Events,Event{X:x,Y:y,Type:t})
 }
 
+//Adds bullet to game
 func (g *Game) AddBullet(o *Bullet) {
 	o.Id = MakeGUID()
 	o.Step()
 	g.Bullets = append(g.Bullets, o)
 }
 
+//Adds granade to game
 func (g *Game) AddGranade(o *Granade) {
 	o.Id = MakeGUID()
 	o.Step()
 	g.Granades = append(g.Granades, o)
 }
 
+//Adds wall to game map
 func (g *Game) AddWall(x, y int) {
 	g.Walls = append(g.Walls, &Wall{X:x,Y:y,Life:MAX_WALL_LIFE,Id:MakeGUID()})
 }
 
+//Adds player to game
 func (g *Game) AddPlayer(p *Player) {
 	g.Players = append(g.Players, p)
 }
 
+//Process of single turn
 func (g *Game) Step() {
 	g.Turn++
 
