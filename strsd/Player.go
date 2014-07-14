@@ -41,7 +41,14 @@ func MakePlayer(name string, game *Game) *Player {
 
 //Generate simple box-shaped polygon from position 
 func GetBox(x, y int) polyclip.Polygon {
-	return polyclip.Polygon{{{float64(x), float64(y)}, {float64(x), float64(y+1)}, {float64(x+1), float64(y+1)}, {float64(x+1), float64(y)}}}
+	return polyclip.Polygon{
+		{
+			{float64(x), float64(y)},
+			{float64(x), float64(y+1)},
+			{float64(x+1), float64(y+1)},
+			{float64(x+1), float64(y)},
+		},
+	}
 }
 
 //Compute angle between 2 positions
