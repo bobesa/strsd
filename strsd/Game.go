@@ -9,6 +9,7 @@ import (
 	"math/rand"
 	"fmt"
 	"encoding/json"
+	"strconv"
 )
 
 type Game struct {
@@ -43,7 +44,7 @@ func MakeGame(apiPath string) *Game {
 		Granades: make([]*Granade,0),
 		Width: 5,
 		Height: 5,
-		FragLimit: FRAG_LIMIT,
+		FragLimit: DEFAULT_FRAG_LIMIT,
 		Score: make(map[string]int),
 		Queue: make(chan *Request),
 		Events: make([]Event,0),
@@ -165,7 +166,12 @@ func (g *Game) NewMap(filename string) {
 		g.Width = 2
 		for y, line := range lines {
 			if(y == 0) {
-				fmt.Println("Number of frags: "+line) //TODO: parse number of frags
+				fragLimit, err := strconv.Atoi(strings.Trim(line," \n\r"))
+				if(err == nil) {
+					g.FragLimit = fragLimit
+				} else {
+					g.FragLimit = DEFAULT_FRAG_LIMIT
+				}
 			} else {
 				if(g.Width < len(line)-1) {
 					g.Width = len(line)-1
