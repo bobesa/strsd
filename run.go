@@ -26,7 +26,7 @@ func main() {
 	http.HandleFunc(apiPath, myGame.ProcessRequest)
 
 	//Player preload
-	playerNames := []string{/*"bobesa","bot","bot2"*/}
+	playerNames := []string{/* enter usernames here */}
 	for _, name := range playerNames {
 		player := myGame.MakePlayer(name);
 		myGame.AddPlayer(player)
